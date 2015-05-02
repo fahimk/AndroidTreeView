@@ -33,6 +33,7 @@ public class AndroidTreeView {
     private TreeNode.TreeNodeClickListener nodeClickListener;
     private boolean mSelectionModeEnabled;
     private boolean mUseDefaultAnimation = false;
+    private boolean mCollapseAllOtherRoots = false;
     private boolean mCollapseChildren = true;
     HashSet<TreeNode> mExpandedNodes = new HashSet<TreeNode>();
 
@@ -44,6 +45,10 @@ public class AndroidTreeView {
 
     public void setCollapseChildren(boolean collapseChildren) {
         this.mCollapseChildren = collapseChildren;
+    }
+
+    public void setCollapseAllOtherRoots(boolean collapseAllOtherRoots) {
+        this.mCollapseAllOtherRoots = collapseAllOtherRoots;
     }
 
     public void setDefaultAnimation(boolean defaultAnimation) {
@@ -232,6 +237,14 @@ public class AndroidTreeView {
             expand(parentViewHolder.getNodeItemsView());
         } else {
             parentViewHolder.getNodeItemsView().setVisibility(View.VISIBLE);
+        }
+
+        if (mCollapseAllOtherRoots && node.getParent() != null) {
+            for (final TreeNode n : node.getParent().getChildren()) {
+                if (n != node) {
+                    collapseNode(n, true);
+                }
+            }
         }
 
         if (node.getParent() != null) {
